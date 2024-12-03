@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 
 class Seat:
     def _init_(self,number,row,price):
@@ -40,12 +40,12 @@ class SalaCine:
             addSeat=True
             for seat in self._seat:
                 if seat.number == number and seat.row == row:
-    
-                    raise ValueError(f"The seat: {number} in the row: {row} already exists.")
                     addSeat=False
+                    print(f"The seat: {number} in the row: {row} already exists.")
                     break
-            new_Seat=Seat(number,row)
-            self._seat.append(new_Seat)
+            if addSeat==True:
+                new_Seat=Seat(number,row)
+                self._seat.append(new_Seat)
 
         #search a new Seat
     def search_seat(self, number, row):
@@ -56,30 +56,57 @@ class SalaCine:
 
         #reserve or cancelReserve
     def reserve_or_Cancel_Seat(self,number,row):
-            seat=self.search_seat(number,row)
+            try:
+                seat=self.search_seat(number,row)
 
-            if seat.isReserved:
-                 seat.isReserved=False
-                 raise  ValueError(f"The Seat {numero} in the row {fila} already is reserved.")
-            else:
-                seat.isReserved=True
+                if seat.isReserved:
+                    seat.isReserved=False
+                    
+                else:
+                    seat.isReserved=True
+            except:
+                print("The Seat dont exist")
             
         #Show_Asientos
     def show_seat(self):
-         for seat in self._seat:
-              print("Seat number:",seat.number," row:",seat.row,"is reserved:",seat.isReserved," price: ",seat.price)
+            for seat in self._seat:
+                print("Seat number:",seat.number," row:",seat.row,"is reserved:",seat.isReserved," price: ",seat.price)
         #CalculatePrice
-    def calculate_price(self,age,day):
-        price =self.base_price
+    def calculate_price(self,age):
 
-        #30% Discount 
-        if age>65:
-              price=price*0.7
+        #Validation for Age
+            try:
+                age=int(age)
+                price =self.base_price
+                today=date.today()
+                weekday=today.weekday #return a number of the week 0-Monday, 1-Thuesday, 2-wednesday...
 
-        #20% Discount 
-        if day.lower()=="wednesday" or day.lower()=="miércoles":
-             price=price*0.8
+            #30% Discount 
+                if age>65:
+                    price=price*0.7
 
-        return price
-    def __str__(self):
-         return
+            #20% Discount 
+                if weekday==2:
+                    price=price*0.8
+                
+                return price
+            except:
+                print("Error age its not a integer")
+            return None
+       
+    #Get age of the client
+    def get_age(year_of_birthday,month_of_birthdday,day_of_birthday):
+            try:
+                year_of_birthday=int(year_of_birthday)
+                month_of_birthdday=int(month_of_birthdday)
+                day_of_birthday=int(day_of_birthday)
+                today=date.today()
+                age=today.year-year_of_birthday
+                if(month_of_birthdday<today.month):
+                    if(day_of_birthday<=today.day):
+                        age=age+1
+            
+                return age
+            except:
+                print("Error input its not a integer")
+                return None
